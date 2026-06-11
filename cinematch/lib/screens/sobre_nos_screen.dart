@@ -1,186 +1,196 @@
 import 'package:flutter/material.dart';
-import '../main.dart';
 
-/// Tela "Sobre Nós" com fotos (avatares) e informações
-/// sobre os desenvolvedores.
+// Tela "Sobre Nós" com fotos (Image.network) e informações
+// sobre os desenvolvedores.
 class SobreNosScreen extends StatelessWidget {
   const SobreNosScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('SOBRE NÓS')),
+      backgroundColor: const Color(0xFF0D0D14),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFE50914),
+        title: const Text('Sobre Nós', style: TextStyle(color: Colors.white)),
+        centerTitle: true,
+      ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Icon(Icons.groups, size: 72, color: AppColors.dourado),
-            const SizedBox(height: 8),
-            const Text(
-              'Equipe CineMatch',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 26,
-                fontWeight: FontWeight.w900,
-                color: AppColors.dourado,
-                letterSpacing: 1.5,
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            children: [
+              const Text(
+                'Equipe CineMatch 🎬',
+                style: TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFFFFC857),
+                ),
               ),
-            ),
-            const SizedBox(height: 4),
-            const Text(
-              'Os cinéfilos por trás do projeto 🎬',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: AppColors.textoSuave,
-                fontStyle: FontStyle.italic,
+              const Text(
+                'Os cinéfilos por trás do projeto',
+                style: TextStyle(
+                  color: Colors.white70,
+                  fontStyle: FontStyle.italic,
+                ),
               ),
-            ),
-            const SizedBox(height: 28),
-            // ⚠️ Substitua os dados abaixo pelos integrantes reais do grupo.
-            // Para usar fotos reais, troque o `icone` por:
-            //   backgroundImage: AssetImage('assets/images/foto.jpg')
-            const _CardDesenvolvedor(
-              nome: 'Miguel',
-              funcao: 'Desenvolvedor & Líder do Projeto',
-              descricao:
-                  'Responsável pela arquitetura do app e pelas telas de '
-                  'login e cadastro. Fã de ficção científica.',
-              filmeFavorito: 'Interestelar',
-              icone: Icons.code,
-              cor: AppColors.vermelho,
-            ),
-            const _CardDesenvolvedor(
-              nome: 'Integrante 2',
-              funcao: 'Designer de Interface',
-              descricao:
-                  'Criou a identidade visual do CineMatch, escolhendo as '
-                  'cores e o estilo inspirado nas salas de cinema.',
-              filmeFavorito: 'O Poderoso Chefão',
-              icone: Icons.palette,
-              cor: AppColors.dourado,
-            ),
-            const _CardDesenvolvedor(
-              nome: 'Integrante 3',
-              funcao: 'Desenvolvedor Back-end',
-              descricao:
-                  'Implementou a lógica de busca e o armazenamento dos '
-                  'usuários no vetor. Maratonista de séries.',
-              filmeFavorito: 'Matrix',
-              icone: Icons.storage,
-              cor: Colors.lightBlueAccent,
-            ),
-            const SizedBox(height: 24),
-            Card(
-              color: AppColors.fundoCard,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-                side: const BorderSide(color: AppColors.dourado),
-              ),
-              child: const Padding(
-                padding: EdgeInsets.all(20),
+              const SizedBox(height: 24),
+
+              // ⚠️ Troque os nomes e as fotos pelos integrantes reais do grupo
+              Container(
+                width: double.infinity,
+                margin: const EdgeInsets.only(bottom: 16),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1A1A26),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFFE50914)),
+                ),
                 child: Column(
                   children: [
-                    Icon(Icons.school, color: AppColors.dourado, size: 36),
-                    SizedBox(height: 8),
-                    Text(
-                      'Projeto Integrador',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.texto,
+                    // foto redonda usando Container com BoxShape.circle
+                    Container(
+                      width: 100,
+                      height: 100,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          image: NetworkImage(
+                              'https://picsum.photos/seed/dev1/200'),
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
-                    SizedBox(height: 4),
-                    Text(
-                      'Aplicativo desenvolvido em Flutter como trabalho '
-                      'acadêmico, aplicando navegação, formulários, '
-                      'validação e armazenamento de dados em vetor.',
-                      textAlign: TextAlign.center,
+                    const SizedBox(height: 10),
+                    const Text(
+                      'Miguel',
                       style: TextStyle(
-                          color: AppColors.textoSuave, height: 1.5),
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const Text(
+                      'Desenvolvedor e líder do projeto',
+                      style: TextStyle(color: Color(0xFFFFC857)),
+                    ),
+                    const SizedBox(height: 6),
+                    const Text(
+                      'Responsável pelas telas de login e cadastro. '
+                      'Fã de ficção científica. 🚀\nFilme favorito: Interestelar',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.white70),
                     ),
                   ],
                 ),
               ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
-class _CardDesenvolvedor extends StatelessWidget {
-  final String nome;
-  final String funcao;
-  final String descricao;
-  final String filmeFavorito;
-  final IconData icone;
-  final Color cor;
-
-  const _CardDesenvolvedor({
-    required this.nome,
-    required this.funcao,
-    required this.descricao,
-    required this.filmeFavorito,
-    required this.icone,
-    required this.cor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      color: AppColors.fundoCard,
-      margin: const EdgeInsets.only(bottom: 16),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: cor.withOpacity(0.4)),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            CircleAvatar(
-              radius: 42,
-              backgroundColor: cor.withOpacity(0.15),
-              child: Icon(icone, size: 42, color: cor),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              nome,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: AppColors.texto,
+              Container(
+                width: double.infinity,
+                margin: const EdgeInsets.only(bottom: 16),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1A1A26),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFFFFC857)),
+                ),
+                child: Column(
+                  children: [
+                    Container(
+                      width: 100,
+                      height: 100,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          image: NetworkImage(
+                              'https://picsum.photos/seed/dev2/200'),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    const Text(
+                      'Integrante 2',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const Text(
+                      'Designer de interface',
+                      style: TextStyle(color: Color(0xFFFFC857)),
+                    ),
+                    const SizedBox(height: 6),
+                    const Text(
+                      'Criou a identidade visual do CineMatch, inspirada '
+                      'nas salas de cinema. 🎨\nFilme favorito: O Poderoso Chefão',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.white70),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            Text(
-              funcao,
-              style: TextStyle(
-                fontSize: 14,
-                color: cor,
-                fontWeight: FontWeight.w600,
+
+              Container(
+                width: double.infinity,
+                margin: const EdgeInsets.only(bottom: 16),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1A1A26),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.lightBlue),
+                ),
+                child: Column(
+                  children: [
+                    Container(
+                      width: 100,
+                      height: 100,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          image: NetworkImage(
+                              'https://picsum.photos/seed/dev3/200'),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    const Text(
+                      'Integrante 3',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const Text(
+                      'Desenvolvedor',
+                      style: TextStyle(color: Color(0xFFFFC857)),
+                    ),
+                    const SizedBox(height: 6),
+                    const Text(
+                      'Implementou a busca e o armazenamento dos usuários '
+                      'no vetor. 📺\nFilme favorito: Matrix',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.white70),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              descricao,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                  color: AppColors.textoSuave, height: 1.5),
-            ),
-            const SizedBox(height: 12),
-            Chip(
-              avatar: const Icon(Icons.favorite,
-                  size: 16, color: AppColors.vermelho),
-              label: Text('Filme favorito: $filmeFavorito'),
-              backgroundColor: AppColors.fundo,
-              labelStyle:
-                  const TextStyle(color: AppColors.texto, fontSize: 13),
-              side: BorderSide(color: cor.withOpacity(0.4)),
-            ),
-          ],
+
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFE50914),
+                  foregroundColor: Colors.white,
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('VOLTAR'),
+              ),
+            ],
+          ),
         ),
       ),
     );

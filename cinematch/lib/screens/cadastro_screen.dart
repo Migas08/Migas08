@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import '../main.dart';
 import '../models/usuario.dart';
 
-/// Tela de cadastro com campos de texto, checkboxes, radios e
-/// switches. Os valores são armazenados no vetor [usuariosCadastrados].
+// Tela de cadastro com TextFormFields, checkboxes, radios e switches.
+// Os valores obtidos da tela são armazenados no vetor usuariosCadastrados.
 class CadastroScreen extends StatefulWidget {
   const CadastroScreen({super.key});
 
@@ -13,300 +12,387 @@ class CadastroScreen extends StatefulWidget {
 
 class _CadastroScreenState extends State<CadastroScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _nomeController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _senhaController = TextEditingController();
 
-  // Checkboxes: gêneros favoritos
-  final Map<String, bool> _generos = {
-    'Ação': false,
-    'Comédia': false,
-    'Drama': false,
-    'Terror': false,
-    'Romance': false,
-    'Ficção Científica': false,
-  };
+  // controllers dos campos de texto
+  final campoNome = TextEditingController();
+  final campoEmail = TextEditingController();
+  final campoSenha = TextEditingController();
 
-  // Radio: plataforma de streaming preferida
-  String _plataforma = 'Netflix';
+  // checkboxes - gêneros favoritos (variáveis bool, como na aula)
+  bool acao = false;
+  bool comedia = false;
+  bool drama = false;
+  bool terror = false;
+  bool romance = false;
+  bool ficcao = false;
 
-  // Switches
-  bool _receberNotificacoes = true;
-  bool _perfilPublico = false;
+  // radio - plataforma de streaming preferida
+  String plataforma = 'Netflix';
 
-  @override
-  void dispose() {
-    _nomeController.dispose();
-    _emailController.dispose();
-    _senhaController.dispose();
-    super.dispose();
+  // switches - preferências
+  bool notificacoes = true;
+  bool perfilPublico = false;
+
+  // método que mostra no console os elementos cadastrados (aula)
+  void mostrarCadastrados() {
+    for (int i = 0; i < usuariosCadastrados.length; i++) {
+      print('Nome: ${usuariosCadastrados[i].nome} | '
+          'E-mail: ${usuariosCadastrados[i].email} | '
+          'Gêneros: ${usuariosCadastrados[i].generos} | '
+          'Plataforma: ${usuariosCadastrados[i].plataforma} | '
+          'Notificações: ${usuariosCadastrados[i].notificacoes} | '
+          'Perfil público: ${usuariosCadastrados[i].perfilPublico}');
+    }
   }
 
-  void _cadastrar() {
-    if (!_formKey.currentState!.validate()) return;
+  void cadastrar() {
+    if (_formKey.currentState!.validate()) {
+      // monta a String de gêneros a partir dos checkboxes
+      String generos = '';
+      if (acao) generos += 'Ação, ';
+      if (comedia) generos += 'Comédia, ';
+      if (drama) generos += 'Drama, ';
+      if (terror) generos += 'Terror, ';
+      if (romance) generos += 'Romance, ';
+      if (ficcao) generos += 'Ficção Científica, ';
+      if (generos.isEmpty) {
+        generos = 'Nenhum';
+      } else {
+        generos = generos.substring(0, generos.length - 2);
+      }
 
-    final generosSelecionados = _generos.entries
-        .where((e) => e.value)
-        .map((e) => e.key)
-        .toList();
+      // armazena os valores da tela no vetor (List.add)
+      usuariosCadastrados.add(Usuario(
+        campoNome.text,
+        campoEmail.text,
+        campoSenha.text,
+        generos,
+        plataforma,
+        notificacoes,
+        perfilPublico,
+      ));
 
-    if (generosSelecionados.isEmpty) {
+      mostrarCadastrados();
+
+      // mensagem de sucesso em uma SnackBar (como na aula)
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          backgroundColor: AppColors.vermelho,
-          content: Text('Selecione pelo menos um gênero favorito!'),
+          content: Text('Usuário cadastrado com sucesso! 🎬'),
+          backgroundColor: Colors.green,
         ),
       );
-      return;
+
+      // limpa os campos após cadastrar
+      campoNome.clear();
+      campoEmail.clear();
+      campoSenha.clear();
+      _formKey.currentState!.reset();
+      setState(() {
+        acao = false;
+        comedia = false;
+        drama = false;
+        terror = false;
+        romance = false;
+        ficcao = false;
+        plataforma = 'Netflix';
+        notificacoes = true;
+        perfilPublico = false;
+      });
     }
-
-    final email = _emailController.text.trim();
-    final jaExiste = usuariosCadastrados
-        .any((u) => u.email.toLowerCase() == email.toLowerCase());
-    if (jaExiste) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: AppColors.vermelho,
-          content: Text('Este e-mail já está cadastrado!'),
-        ),
-      );
-      return;
-    }
-
-    // Armazena os valores da tela no vetor
-    usuariosCadastrados.add(
-      Usuario(
-        nome: _nomeController.text.trim(),
-        email: email,
-        senha: _senhaController.text,
-        generosFavoritos: generosSelecionados,
-        plataformaPreferida: _plataforma,
-        receberNotificacoes: _receberNotificacoes,
-        perfilPublico: _perfilPublico,
-      ),
-    );
-
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        backgroundColor: AppColors.fundoCard,
-        icon: const Icon(Icons.celebration,
-            color: AppColors.dourado, size: 48),
-        title: const Text('Cadastro realizado!'),
-        content: Text(
-          'Perfil de ${_nomeController.text.trim()} criado com sucesso! 🎬\n'
-          'Agora você já pode fazer login.',
-          textAlign: TextAlign.center,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pushReplacementNamed(context, '/login');
-            },
-            child: const Text('IR PARA O LOGIN'),
-          ),
-        ],
-      ),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('CADASTRO')),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Icon(Icons.person_add_alt_1,
-                  size: 64, color: AppColors.dourado),
-              const SizedBox(height: 8),
-              const Text(
-                'Crie seu perfil cinéfilo',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.dourado,
-                ),
-              ),
-              const SizedBox(height: 24),
-
-              // Campos de texto
-              TextFormField(
-                controller: _nomeController,
-                decoration: const InputDecoration(
-                  labelText: 'Nome completo',
-                  prefixIcon: Icon(Icons.person),
-                ),
-                validator: (valor) {
-                  if (valor == null || valor.trim().isEmpty) {
-                    return 'Informe o nome';
-                  }
-                  if (valor.trim().length < 3) {
-                    return 'O nome deve ter pelo menos 3 caracteres';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(
-                  labelText: 'E-mail',
-                  prefixIcon: Icon(Icons.email),
-                ),
-                validator: (valor) {
-                  if (valor == null || valor.trim().isEmpty) {
-                    return 'Informe o e-mail';
-                  }
-                  if (!valor.contains('@') || !valor.contains('.')) {
-                    return 'E-mail inválido';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _senhaController,
-                obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: 'Senha (mínimo 6 caracteres)',
-                  prefixIcon: Icon(Icons.lock),
-                ),
-                validator: (valor) {
-                  if (valor == null || valor.isEmpty) {
-                    return 'Informe a senha';
-                  }
-                  if (valor.length < 6) {
-                    return 'A senha deve ter pelo menos 6 caracteres';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 24),
-
-              // Checkboxes — gêneros favoritos
-              const _TituloSecao('🎬 Gêneros favoritos'),
-              Card(
-                color: AppColors.fundoCard,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Column(
-                  children: _generos.keys
-                      .map((genero) => CheckboxListTile(
-                            title: Text(genero,
-                                style: const TextStyle(
-                                    color: AppColors.texto)),
-                            value: _generos[genero],
-                            activeColor: AppColors.vermelho,
-                            onChanged: (valor) => setState(
-                                () => _generos[genero] = valor ?? false),
-                          ))
-                      .toList(),
-                ),
-              ),
-              const SizedBox(height: 24),
-
-              // Radios — plataforma preferida
-              const _TituloSecao('📺 Plataforma de streaming preferida'),
-              Card(
-                color: AppColors.fundoCard,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Column(
-                  children: [
-                    'Netflix',
-                    'Prime Video',
-                    'Disney+',
-                    'HBO Max',
-                  ]
-                      .map((plataforma) => RadioListTile<String>(
-                            title: Text(plataforma,
-                                style: const TextStyle(
-                                    color: AppColors.texto)),
-                            value: plataforma,
-                            groupValue: _plataforma,
-                            activeColor: AppColors.dourado,
-                            onChanged: (valor) =>
-                                setState(() => _plataforma = valor!),
-                          ))
-                      .toList(),
-                ),
-              ),
-              const SizedBox(height: 24),
-
-              // Switches — preferências
-              const _TituloSecao('⚙️ Preferências'),
-              Card(
-                color: AppColors.fundoCard,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Column(
-                  children: [
-                    SwitchListTile(
-                      title: const Text('Receber notificações',
-                          style: TextStyle(color: AppColors.texto)),
-                      subtitle: const Text(
-                          'Avisos de novas recomendações',
-                          style: TextStyle(
-                              color: AppColors.textoSuave, fontSize: 12)),
-                      value: _receberNotificacoes,
-                      activeColor: AppColors.vermelho,
-                      onChanged: (valor) =>
-                          setState(() => _receberNotificacoes = valor),
-                    ),
-                    SwitchListTile(
-                      title: const Text('Perfil público',
-                          style: TextStyle(color: AppColors.texto)),
-                      subtitle: const Text(
-                          'Outros usuários podem ver suas listas',
-                          style: TextStyle(
-                              color: AppColors.textoSuave, fontSize: 12)),
-                      value: _perfilPublico,
-                      activeColor: AppColors.vermelho,
-                      onChanged: (valor) =>
-                          setState(() => _perfilPublico = valor),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 28),
-              ElevatedButton.icon(
-                onPressed: _cadastrar,
-                icon: const Icon(Icons.check),
-                label: const Text('CADASTRAR'),
-              ),
-            ],
-          ),
-        ),
+      backgroundColor: const Color(0xFF0D0D14),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFE50914),
+        title: const Text('Cadastro', style: TextStyle(color: Colors.white)),
+        centerTitle: true,
       ),
-    );
-  }
-}
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Center(
+                  child: Text(
+                    'Crie seu perfil cinéfilo 🍿',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFFFFC857),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: campoNome,
+                  style: const TextStyle(color: Colors.black),
+                  decoration: InputDecoration(
+                    labelText: 'Nome',
+                    icon: const Icon(Icons.person, color: Color(0xFFFFC857)),
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  validator: (valor) {
+                    if (valor == null || valor.isEmpty) {
+                      return 'O campo nome não pode ser vazio';
+                    }
+                    if (valor.length < 3) {
+                      return 'O nome deve ter pelo menos 3 caracteres';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: campoEmail,
+                  style: const TextStyle(color: Colors.black),
+                  decoration: InputDecoration(
+                    labelText: 'E-mail',
+                    icon: const Icon(Icons.email, color: Color(0xFFFFC857)),
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  validator: (valor) {
+                    if (valor == null || valor.isEmpty) {
+                      return 'O campo e-mail não pode ser vazio';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: campoSenha,
+                  obscureText: true,
+                  style: const TextStyle(color: Colors.black),
+                  decoration: InputDecoration(
+                    labelText: 'Senha',
+                    icon: const Icon(Icons.lock, color: Color(0xFFFFC857)),
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  validator: (valor) {
+                    if (valor == null || valor.isEmpty) {
+                      return 'O campo senha não pode ser vazio';
+                    }
+                    if (valor.length < 3) {
+                      return 'A senha não pode ter menos que 3 caracteres';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 24),
 
-class _TituloSecao extends StatelessWidget {
-  final String texto;
-  const _TituloSecao(this.texto);
+                // CheckboxListTile - gêneros favoritos
+                const Text(
+                  '🎬 Gêneros favoritos:',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFFFFC857),
+                  ),
+                ),
+                CheckboxListTile(
+                  title: const Text('Ação',
+                      style: TextStyle(color: Colors.white)),
+                  value: acao,
+                  activeColor: const Color(0xFFE50914),
+                  onChanged: (bool? valor) {
+                    setState(() {
+                      acao = valor!;
+                    });
+                  },
+                ),
+                CheckboxListTile(
+                  title: const Text('Comédia',
+                      style: TextStyle(color: Colors.white)),
+                  value: comedia,
+                  activeColor: const Color(0xFFE50914),
+                  onChanged: (bool? valor) {
+                    setState(() {
+                      comedia = valor!;
+                    });
+                  },
+                ),
+                CheckboxListTile(
+                  title: const Text('Drama',
+                      style: TextStyle(color: Colors.white)),
+                  value: drama,
+                  activeColor: const Color(0xFFE50914),
+                  onChanged: (bool? valor) {
+                    setState(() {
+                      drama = valor!;
+                    });
+                  },
+                ),
+                CheckboxListTile(
+                  title: const Text('Terror',
+                      style: TextStyle(color: Colors.white)),
+                  value: terror,
+                  activeColor: const Color(0xFFE50914),
+                  onChanged: (bool? valor) {
+                    setState(() {
+                      terror = valor!;
+                    });
+                  },
+                ),
+                CheckboxListTile(
+                  title: const Text('Romance',
+                      style: TextStyle(color: Colors.white)),
+                  value: romance,
+                  activeColor: const Color(0xFFE50914),
+                  onChanged: (bool? valor) {
+                    setState(() {
+                      romance = valor!;
+                    });
+                  },
+                ),
+                CheckboxListTile(
+                  title: const Text('Ficção Científica',
+                      style: TextStyle(color: Colors.white)),
+                  value: ficcao,
+                  activeColor: const Color(0xFFE50914),
+                  onChanged: (bool? valor) {
+                    setState(() {
+                      ficcao = valor!;
+                    });
+                  },
+                ),
+                const SizedBox(height: 16),
 
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Text(
-        texto,
-        style: const TextStyle(
-          fontSize: 17,
-          fontWeight: FontWeight.bold,
-          color: AppColors.dourado,
+                // RadioListTile - plataforma preferida
+                const Text(
+                  '📺 Plataforma preferida:',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFFFFC857),
+                  ),
+                ),
+                RadioListTile<String>(
+                  title: const Text('Netflix',
+                      style: TextStyle(color: Colors.white)),
+                  value: 'Netflix',
+                  groupValue: plataforma,
+                  activeColor: const Color(0xFFFFC857),
+                  onChanged: (String? valor) {
+                    setState(() {
+                      plataforma = valor!;
+                    });
+                  },
+                ),
+                RadioListTile<String>(
+                  title: const Text('Prime Video',
+                      style: TextStyle(color: Colors.white)),
+                  value: 'Prime Video',
+                  groupValue: plataforma,
+                  activeColor: const Color(0xFFFFC857),
+                  onChanged: (String? valor) {
+                    setState(() {
+                      plataforma = valor!;
+                    });
+                  },
+                ),
+                RadioListTile<String>(
+                  title: const Text('Disney+',
+                      style: TextStyle(color: Colors.white)),
+                  value: 'Disney+',
+                  groupValue: plataforma,
+                  activeColor: const Color(0xFFFFC857),
+                  onChanged: (String? valor) {
+                    setState(() {
+                      plataforma = valor!;
+                    });
+                  },
+                ),
+                RadioListTile<String>(
+                  title: const Text('HBO Max',
+                      style: TextStyle(color: Colors.white)),
+                  value: 'HBO Max',
+                  groupValue: plataforma,
+                  activeColor: const Color(0xFFFFC857),
+                  onChanged: (String? valor) {
+                    setState(() {
+                      plataforma = valor!;
+                    });
+                  },
+                ),
+                const SizedBox(height: 16),
+
+                // SwitchListTile - preferências
+                const Text(
+                  '⚙️ Preferências:',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFFFFC857),
+                  ),
+                ),
+                SwitchListTile(
+                  title: const Text('Receber notificações',
+                      style: TextStyle(color: Colors.white)),
+                  value: notificacoes,
+                  activeColor: const Color(0xFFE50914),
+                  onChanged: (bool valor) {
+                    setState(() {
+                      notificacoes = valor;
+                    });
+                  },
+                ),
+                SwitchListTile(
+                  title: const Text('Perfil público',
+                      style: TextStyle(color: Colors.white)),
+                  value: perfilPublico,
+                  activeColor: const Color(0xFFE50914),
+                  onChanged: (bool valor) {
+                    setState(() {
+                      perfilPublico = valor;
+                    });
+                  },
+                ),
+                const SizedBox(height: 24),
+                Center(
+                  child: Column(
+                    children: [
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFE50914),
+                          foregroundColor: Colors.white,
+                        ),
+                        onPressed: cadastrar,
+                        child: const Text('CADASTRAR'),
+                      ),
+                      const SizedBox(height: 12),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFFFC857),
+                          foregroundColor: Colors.black,
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text('VOLTAR'),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );

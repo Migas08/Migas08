@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import '../main.dart';
 import '../models/usuario.dart';
 
-/// Tela de busca: pesquisa usuários cadastrados no vetor por
-/// nome, e-mail ou gênero favorito e exibe os resultados.
+// Tela de busca: pesquisa por determinado atributo (escolhido com
+// RadioListTile) e mostra os dados cadastrados no vetor.
 class BuscaScreen extends StatefulWidget {
   const BuscaScreen({super.key});
 
@@ -12,229 +11,224 @@ class BuscaScreen extends StatefulWidget {
 }
 
 class _BuscaScreenState extends State<BuscaScreen> {
-  final _buscaController = TextEditingController();
-  String _atributo = 'Nome';
-  List<Usuario> _resultados = [];
-  bool _buscou = false;
+  // controller para manipular o conteúdo do TextField
+  final campoBusca = TextEditingController();
+
+  // atributo escolhido para a busca (radio)
+  String atributo = 'Nome';
+
+  // vetor com os resultados da busca
+  List<Usuario> resultados = [];
 
   @override
   void initState() {
     super.initState();
-    // Mostra todos os usuários ao abrir a tela
-    _resultados = List.from(usuariosCadastrados);
+    // ao abrir a tela, mostra todos os usuários cadastrados
+    resultados = usuariosCadastrados;
   }
 
-  @override
-  void dispose() {
-    _buscaController.dispose();
-    super.dispose();
-  }
+  void buscar() {
+    String termo = campoBusca.text.toLowerCase();
+    List<Usuario> encontrados = [];
 
-  void _buscar() {
-    final termo = _buscaController.text.trim().toLowerCase();
-    setState(() {
-      _buscou = true;
-      if (termo.isEmpty) {
-        _resultados = List.from(usuariosCadastrados);
-        return;
+    // percorre o vetor procurando pelo atributo escolhido
+    for (int i = 0; i < usuariosCadastrados.length; i++) {
+      Usuario u = usuariosCadastrados[i];
+      if (atributo == 'Nome' && u.nome.toLowerCase().contains(termo)) {
+        encontrados.add(u);
+      } else if (atributo == 'E-mail' &&
+          u.email.toLowerCase().contains(termo)) {
+        encontrados.add(u);
+      } else if (atributo == 'Gênero' &&
+          u.generos.toLowerCase().contains(termo)) {
+        encontrados.add(u);
+      } else if (atributo == 'Plataforma' &&
+          u.plataforma.toLowerCase().contains(termo)) {
+        encontrados.add(u);
       }
-      _resultados = usuariosCadastrados.where((u) {
-        switch (_atributo) {
-          case 'Nome':
-            return u.nome.toLowerCase().contains(termo);
-          case 'E-mail':
-            return u.email.toLowerCase().contains(termo);
-          case 'Gênero favorito':
-            return u.generosFavoritos
-                .any((g) => g.toLowerCase().contains(termo));
-          case 'Plataforma':
-            return u.plataformaPreferida.toLowerCase().contains(termo);
-          default:
-            return false;
-        }
-      }).toList();
+    }
+
+    // redesenha a tela com os resultados (setState)
+    setState(() {
+      resultados = encontrados;
     });
+  }
+
+  // monta a lista de widgets com os dados de cada usuário encontrado
+  List<Widget> montarResultados() {
+    List<Widget> lista = [];
+    for (int i = 0; i < resultados.length; i++) {
+      Usuario u = resultados[i];
+      lista.add(
+        Container(
+          width: double.infinity,
+          margin: const EdgeInsets.only(bottom: 12),
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: const Color(0xFF1A1A26),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: const Color(0xFFE50914)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '🎬 ${u.nome}',
+                style: const TextStyle(
+                  color: Color(0xFFFFC857),
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text('E-mail: ${u.email}',
+                  style: const TextStyle(color: Colors.white)),
+              Text('Gêneros: ${u.generos}',
+                  style: const TextStyle(color: Colors.white)),
+              Text('Plataforma: ${u.plataforma}',
+                  style: const TextStyle(color: Colors.white)),
+              Text(
+                  'Notificações: ${u.notificacoes ? "Ativadas" : "Desativadas"}',
+                  style: const TextStyle(color: Colors.white)),
+              Text('Perfil: ${u.perfilPublico ? "Público" : "Privado"}',
+                  style: const TextStyle(color: Colors.white)),
+            ],
+          ),
+        ),
+      );
+    }
+    return lista;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('BUSCAR USUÁRIOS')),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Seleção do atributo de busca
-            DropdownButtonFormField<String>(
-              value: _atributo,
-              dropdownColor: AppColors.fundoCard,
-              decoration: const InputDecoration(
-                labelText: 'Buscar por',
-                prefixIcon: Icon(Icons.filter_list),
+      backgroundColor: const Color(0xFF0D0D14),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFE50914),
+        title: const Text('Buscar Usuários',
+            style: TextStyle(color: Colors.white)),
+        centerTitle: true,
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Buscar por:',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFFFFC857),
+                ),
               ),
-              items: ['Nome', 'E-mail', 'Gênero favorito', 'Plataforma']
-                  .map((a) => DropdownMenuItem(value: a, child: Text(a)))
-                  .toList(),
-              onChanged: (valor) => setState(() => _atributo = valor!),
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _buscaController,
-                    decoration: InputDecoration(
-                      labelText: 'Digite o termo de busca',
-                      prefixIcon: const Icon(Icons.search),
-                    ),
-                    onSubmitted: (_) => _buscar(),
+              // radios para escolher o atributo da busca
+              RadioListTile<String>(
+                title:
+                    const Text('Nome', style: TextStyle(color: Colors.white)),
+                value: 'Nome',
+                groupValue: atributo,
+                activeColor: const Color(0xFFFFC857),
+                onChanged: (String? valor) {
+                  setState(() {
+                    atributo = valor!;
+                  });
+                },
+              ),
+              RadioListTile<String>(
+                title: const Text('E-mail',
+                    style: TextStyle(color: Colors.white)),
+                value: 'E-mail',
+                groupValue: atributo,
+                activeColor: const Color(0xFFFFC857),
+                onChanged: (String? valor) {
+                  setState(() {
+                    atributo = valor!;
+                  });
+                },
+              ),
+              RadioListTile<String>(
+                title: const Text('Gênero',
+                    style: TextStyle(color: Colors.white)),
+                value: 'Gênero',
+                groupValue: atributo,
+                activeColor: const Color(0xFFFFC857),
+                onChanged: (String? valor) {
+                  setState(() {
+                    atributo = valor!;
+                  });
+                },
+              ),
+              RadioListTile<String>(
+                title: const Text('Plataforma',
+                    style: TextStyle(color: Colors.white)),
+                value: 'Plataforma',
+                groupValue: atributo,
+                activeColor: const Color(0xFFFFC857),
+                onChanged: (String? valor) {
+                  setState(() {
+                    atributo = valor!;
+                  });
+                },
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: campoBusca,
+                style: const TextStyle(color: Colors.black),
+                decoration: InputDecoration(
+                  labelText: 'Digite o termo de busca',
+                  icon: const Icon(Icons.search, color: Color(0xFFFFC857)),
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                const SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: _buscar,
-                  child: const Icon(Icons.search),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Text(
-              '${_resultados.length} usuário(s) encontrado(s)',
-              style: const TextStyle(
-                color: AppColors.dourado,
-                fontWeight: FontWeight.bold,
               ),
-            ),
-            const SizedBox(height: 8),
-            Expanded(
-              child: _resultados.isEmpty
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.movie_filter_outlined,
-                              size: 64, color: AppColors.textoSuave),
-                          const SizedBox(height: 12),
-                          Text(
-                            _buscou
-                                ? 'Nenhum usuário encontrado 😢'
-                                : 'Nenhum usuário cadastrado ainda',
-                            style: const TextStyle(
-                                color: AppColors.textoSuave, fontSize: 16),
-                          ),
-                        ],
+              const SizedBox(height: 16),
+              Center(
+                child: Column(
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFE50914),
+                        foregroundColor: Colors.white,
                       ),
-                    )
-                  : ListView.builder(
-                      itemCount: _resultados.length,
-                      itemBuilder: (context, indice) {
-                        final usuario = _resultados[indice];
-                        return Card(
-                          color: AppColors.fundoCard,
-                          margin: const EdgeInsets.only(bottom: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                            side: BorderSide(
-                                color:
-                                    AppColors.vermelho.withOpacity(0.3)),
-                          ),
-                          child: ExpansionTile(
-                            leading: CircleAvatar(
-                              backgroundColor:
-                                  AppColors.vermelho.withOpacity(0.2),
-                              child: Text(
-                                usuario.nome[0].toUpperCase(),
-                                style: const TextStyle(
-                                  color: AppColors.dourado,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            title: Text(
-                              usuario.nome,
-                              style: const TextStyle(
-                                color: AppColors.texto,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            subtitle: Text(
-                              usuario.email,
-                              style: const TextStyle(
-                                  color: AppColors.textoSuave,
-                                  fontSize: 13),
-                            ),
-                            iconColor: AppColors.dourado,
-                            collapsedIconColor: AppColors.textoSuave,
-                            childrenPadding: const EdgeInsets.fromLTRB(
-                                20, 0, 20, 16),
-                            children: [
-                              _LinhaInfo(
-                                icone: Icons.movie,
-                                rotulo: 'Gêneros',
-                                valor:
-                                    usuario.generosFavoritos.join(', '),
-                              ),
-                              _LinhaInfo(
-                                icone: Icons.tv,
-                                rotulo: 'Plataforma',
-                                valor: usuario.plataformaPreferida,
-                              ),
-                              _LinhaInfo(
-                                icone: Icons.notifications,
-                                rotulo: 'Notificações',
-                                valor: usuario.receberNotificacoes
-                                    ? 'Ativadas'
-                                    : 'Desativadas',
-                              ),
-                              _LinhaInfo(
-                                icone: Icons.public,
-                                rotulo: 'Perfil',
-                                valor: usuario.perfilPublico
-                                    ? 'Público'
-                                    : 'Privado',
-                              ),
-                            ],
-                          ),
-                        );
-                      },
+                      onPressed: buscar,
+                      child: const Text('BUSCAR'),
                     ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _LinhaInfo extends StatelessWidget {
-  final IconData icone;
-  final String rotulo;
-  final String valor;
-
-  const _LinhaInfo({
-    required this.icone,
-    required this.rotulo,
-    required this.valor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
-      child: Row(
-        children: [
-          Icon(icone, size: 18, color: AppColors.dourado),
-          const SizedBox(width: 8),
-          Text('$rotulo: ',
-              style: const TextStyle(
-                  color: AppColors.textoSuave,
-                  fontWeight: FontWeight.bold)),
-          Expanded(
-            child: Text(valor,
-                style: const TextStyle(color: AppColors.texto)),
+                    const SizedBox(height: 12),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFFFC857),
+                        foregroundColor: Colors.black,
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text('VOLTAR'),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                '${resultados.length} usuário(s) encontrado(s):',
+                style: const TextStyle(
+                  color: Color(0xFFFFC857),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+              const SizedBox(height: 10),
+              // mostra os dados cadastrados no vetor
+              Column(
+                children: montarResultados(),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

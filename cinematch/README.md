@@ -2,6 +2,12 @@
 
 Aplicativo de **recomendação de filmes e séries** desenvolvido em Flutter para o Projeto Integrador.
 
+> Construído apenas com os recursos vistos em aula (DDM): StatefulWidget e `setState`,
+> rotas nomeadas com `Navigator.pushNamed`/`pop`, `Form` + `TextFormField` com `validator`,
+> `TextEditingController`, `CheckboxListTile`, `RadioListTile`, `SwitchListTile`,
+> classe com construtor/get/set armazenada em `List`, `GestureDetector`, `Image.network`,
+> `Container` com `BoxDecoration`/`DecorationImage`, `showDialog`/`AlertDialog` e `SnackBar`.
+
 ## 📱 Telas do aplicativo
 
 | Tela | Descrição |
