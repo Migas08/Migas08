@@ -37,7 +37,7 @@ Docker · Linux · Git · GitHub · Visual Studio Code
 ### GitHub Stats
 
 <p align="center">
-  <img src="./assets/butterfree.png" width="130" alt="Butterfree em pixel art 2D, na pose da referência" />
+  <img src="https://archives.bulbagarden.net/media/upload/2/2d/Spr_4h_012_m.png" width="130" alt="Butterfree 2D animada em pose inclinada" />
 </p>
 
 <p align="center">
