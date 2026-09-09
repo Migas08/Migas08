@@ -34,6 +34,18 @@ Python · PHP · Node.js · Java · C# · C
 
 Docker · Linux · Git · GitHub · Visual Studio Code
 
+### GitHub Stats
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/12.gif" width="130" alt="Butterfree animada" />
+</p>
+
+<p align="center">
+  <a href="https://github.com/Migas08?tab=overview">
+    <img src="https://streak-stats.demolab.com/?user=Migas08&amp;theme=tokyonight&amp;hide_border=true&amp;border_radius=12&amp;background=0D1117&amp;ring=B58AFF&amp;fire=B58AFF&amp;currStreakLabel=B58AFF&amp;locale=pt_BR" alt="Estatísticas de contribuições de Migas08: total, sequência atual e maior sequência" />
+  </a>
+</p>
+
 ### Áreas de interesse
 
 | Área | O que quero explorar |
