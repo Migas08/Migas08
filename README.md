@@ -37,7 +37,7 @@ Docker · Linux · Git · GitHub · Visual Studio Code
 ### GitHub Stats
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/12.gif" width="130" alt="Butterfree em pixel art 2D animada" />
+  <img src="./assets/butterfree.png" width="130" alt="Butterfree em pixel art 2D, na pose da referência" />
 </p>
 
 <p align="center">
