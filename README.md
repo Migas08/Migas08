@@ -2,20 +2,59 @@
   <img src="./assets/banner.svg" width="100%" alt="Miguel Vinhado" />
 </p>
 
-Tenho interesse em desenvolvimento web, automação com Python e ambientes Linux. Este perfil reúne meus projetos e estudos nessas áreas.
+<p align="center">
+  <strong>Desenvolvimento web &nbsp;·&nbsp; Software &nbsp;·&nbsp; Automação</strong>
+</p>
+
+Tenho interesse em construir aplicações, explorar diferentes linguagens e entender como os sistemas funcionam — da interface ao ambiente de execução. Este espaço reúne meus projetos, estudos e experimentos em desenvolvimento de software.
 
 ### Tecnologias
 
+**Web**
+
 <p>
-  <img src="https://skillicons.dev/icons?i=python,html,css,php,docker,linux&amp;theme=dark" alt="Python, HTML, CSS, PHP, Docker e Linux" />
+  <img src="https://skillicons.dev/icons?i=html,css,js,ts&amp;theme=dark" alt="HTML, CSS, JavaScript e TypeScript" />
 </p>
 
-| Área | Tecnologias |
+HTML · CSS · JavaScript · TypeScript
+
+**Linguagens e execução**
+
+<p>
+  <img src="https://skillicons.dev/icons?i=python,php,nodejs,java,cs,c&amp;theme=dark" alt="Python, PHP, Node.js, Java, C# e C" />
+</p>
+
+Python · PHP · Node.js · Java · C# · C
+
+**Ambiente e ferramentas**
+
+<p>
+  <img src="https://skillicons.dev/icons?i=docker,linux,git,github,vscode&amp;theme=dark" alt="Docker, Linux, Git, GitHub e Visual Studio Code" />
+</p>
+
+Docker · Linux · Git · GitHub · Visual Studio Code
+
+### Áreas de interesse
+
+| Área | O que quero explorar |
 | :--- | :--- |
-| Desenvolvimento | Python, HTML, CSS e PHP |
-| Ambiente | Docker e Linux |
-| Ferramentas | Git, GitHub e Visual Studio Code |
+| Desenvolvimento web | Interfaces responsivas, aplicações e integração entre front-end e back-end. |
+| Back-end | APIs, lógica de aplicação e organização de serviços. |
+| Automação | Scripts e ferramentas para simplificar tarefas repetitivas. |
+| Sistemas e ambiente | Linux, containers e configuração de ambientes de desenvolvimento. |
 
-### Projetos
+### Princípios de desenvolvimento
 
-Meus projetos e códigos disponíveis estão na [lista de repositórios públicos](https://github.com/Migas08?tab=repositories).
+Busco evoluir na escrita de código legível, na organização dos projetos e na documentação das decisões. Também tenho interesse em testes e versionamento para tornar o desenvolvimento mais consistente e facilitar a manutenção.
+
+### Projetos e código
+
+Os trabalhos disponíveis para consulta ficam nos meus repositórios públicos. Este perfil será atualizado conforme novos projetos forem publicados.
+
+[**Explorar repositórios →**](https://github.com/Migas08?tab=repositories)
+
+---
+
+<p align="center">
+  <sub>Miguel Vinhado &nbsp;·&nbsp; <a href="https://github.com/Migas08">@Migas08</a></sub>
+</p>
